@@ -101,6 +101,60 @@ func GetAllBooks() []models.Book {
 	return data
 }
 
+func GetOnlyTrashedBooks() []models.Book {
+	db := getConnection()
+	defer db.Close()
+
+	data := []models.Book{}
+	rows, err := db.Query("select isbn,title,author,is_deleted from books where is_deleted=true")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var isbn int64
+	var title string
+	var author string
+	var is_deleted bool
+
+	for rows.Next() {
+		err := rows.Scan(&isbn, &title, &author, &is_deleted)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data = append(data, models.Book{Title: title, ISBN: isbn, Author: author, IsDeleted: is_deleted})
+	}
+
+	return data
+}
+
+func GetActiveBooks() []models.Book {
+	db := getConnection()
+	defer db.Close()
+
+	data := []models.Book{}
+	rows, err := db.Query("select isbn,title,author,is_deleted from books where is_deleted=false")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var isbn int64
+	var title string
+	var author string
+	var is_deleted bool
+
+	for rows.Next() {
+		err := rows.Scan(&isbn, &title, &author, &is_deleted)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data = append(data, models.Book{Title: title, ISBN: isbn, Author: author, IsDeleted: is_deleted})
+	}
+
+	return data
+}
+
 func GetBookByISBN(isbn int64) (models.Book, bool) {
 	db := getConnection()
 	defer db.Close()
