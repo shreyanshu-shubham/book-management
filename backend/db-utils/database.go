@@ -201,3 +201,22 @@ func EmptyTrash() bool {
 	)
 	return err == nil
 }
+
+func UpdateBook(book models.Book) (bool) {
+	db := getConnection()
+	defer db.Close()
+
+	_, st := GetBookByISBN(book.ISBN)
+	if !st {
+		return false
+	}
+
+	query := `update books set title=$1, author=$2 where isbn=$3`
+	_, err := db.Exec(query, book.Title, book.Author, book.ISBN)
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	return true
+}
