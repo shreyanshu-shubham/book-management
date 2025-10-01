@@ -53,7 +53,14 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }
-func UpdateBook(w http.ResponseWriter, r *http.Request) {}
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	b := models.Book{}
+	utils.ParseBody(r, &b)
+	st  := db_utils.UpdateBook(b)
+	if !st {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}
 func TrashBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookId := vars["isbn"]
