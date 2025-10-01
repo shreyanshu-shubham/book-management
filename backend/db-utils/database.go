@@ -3,7 +3,7 @@ package db_utils
 import (
 	"database/sql"
 	"log"
-	
+
 	_ "github.com/lib/pq"
 	"github.com/shreyanshu-shubham/book-management/backend/models"
 )
@@ -21,12 +21,17 @@ func getConnection() *sql.DB {
 }
 
 func AddBook(book models.Book) bool {
-	query := `insert into books (isbn, title, author, is_deleted) values ($1,$2,$3,$4) returning isbn`
 	db := getConnection()
 	defer db.Close()
 
+	_, st := GetBookByISBN(book.ISBN)
+	if st {
+		return false
+	}
+
 	var isbn int64
-	err := db.QueryRow(query, book.ISBN_number, book.Title, book.Author, book.IsDeleted).Scan(&isbn)
+	query := `insert into books (isbn, title, author, is_deleted) values ($1,$2,$3,$4) returning isbn`
+	err := db.QueryRow(query, book.ISBN, book.Title, book.Author, book.IsDeleted).Scan(&isbn)
 	if err != nil {
 		log.Fatal(err)
 		return false
@@ -34,6 +39,10 @@ func AddBook(book models.Book) bool {
 
 	return true
 }
+
+func SoftDeleteBook() {}
+
+func HardDeleteBok() {}
 
 func GetAllBooks() []models.Book {
 	db := getConnection()
@@ -56,7 +65,7 @@ func GetAllBooks() []models.Book {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data = append(data, models.Book{Title: title, ISBN_number: isbn, Author: author, IsDeleted: is_deleted})
+		data = append(data, models.Book{Title: title, ISBN: isbn, Author: author, IsDeleted: is_deleted})
 	}
 
 	return data
@@ -77,5 +86,5 @@ func GetBookByISBN(isbn int64) (models.Book, bool) {
 		}
 		log.Fatal(err)
 	}
-	return models.Book{Title: title, ISBN_number: isbn, Author: author, IsDeleted: is_deleted}, true
+	return models.Book{Title: title, ISBN: isbn, Author: author, IsDeleted: is_deleted}, true
 }
