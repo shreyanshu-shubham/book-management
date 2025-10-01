@@ -172,3 +172,23 @@ func GetBookByISBN(isbn int64) (models.Book, bool) {
 	}
 	return models.Book{Title: title, ISBN: isbn, Author: author, IsDeleted: is_deleted}, true
 }
+
+func RestoreTrash() bool {
+	db := getConnection()
+	defer db.Close()
+
+	_, err := db.Exec(
+		"update books set is_deleted=false where is_deleted=true",
+	)
+	return err == nil
+}
+
+func EmptyTrash() bool {
+	db := getConnection()
+	defer db.Close()
+
+	_, err := db.Exec(
+		"delete from books where is_deleted=true",
+	)
+	return err == nil
+}

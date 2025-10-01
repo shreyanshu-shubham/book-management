@@ -57,6 +57,16 @@ func RestoreBook(w http.ResponseWriter, r *http.Request) {
 	}
 	db_utils.RestoreBook(ISBN)
 }
-func ClearTrash(w http.ResponseWriter, r *http.Request)   {}
-func RestoreTrash(w http.ResponseWriter, r *http.Request) {}
+func EmptyTrash(w http.ResponseWriter, r *http.Request)   {
+	st := db_utils.EmptyTrash()
+	if !st {
+		w.WriteHeader(500)
+	}
+}
+func RestoreTrash(w http.ResponseWriter, r *http.Request) {
+	st := db_utils.RestoreTrash()
+	if !st {
+		w.WriteHeader(500)
+	}
+}
 func DeleteBook(w http.ResponseWriter, r *http.Request)   {}
