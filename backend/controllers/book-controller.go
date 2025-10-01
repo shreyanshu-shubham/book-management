@@ -29,7 +29,22 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
-func GetBook(w http.ResponseWriter, r *http.Request) {}
+func GetBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	bookId := vars["isbn"]
+	ISBN, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	data, st := db_utils.GetBookByISBN(ISBN)
+	if !st {
+		w.WriteHeader(500)
+	}
+	res , _ := json.Marshal(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
 func AddBook(w http.ResponseWriter, r *http.Request) {
 	b := models.Book{}
 	utils.ParseBody(r, &b)
