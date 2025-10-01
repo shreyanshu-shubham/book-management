@@ -40,9 +40,39 @@ func AddBook(book models.Book) bool {
 	return true
 }
 
-func SoftDeleteBook() {}
+func TrashBook(isbn int64) bool {
+	db := getConnection()
+	defer db.Close()
 
-func HardDeleteBok() {}
+	_,st := GetBookByISBN(isbn)
+	if !st {
+		return false
+	}
+
+	_, err := db.Exec(
+		"update books set is_deleted=true where isbn=$1",
+		isbn,
+	)
+	return err == nil
+}
+
+func RestoreBook(isbn int64) bool {
+	db := getConnection()
+	defer db.Close()
+
+	_,st := GetBookByISBN(isbn)
+	if !st {
+		return false
+	}
+
+	_, err := db.Exec(
+		"update books set is_deleted=false where isbn=$1",
+		isbn,
+	)
+	return err == nil
+}
+
+func DeleteBok() {}
 
 func GetAllBooks() []models.Book {
 	db := getConnection()
