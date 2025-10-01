@@ -12,6 +12,7 @@ var RegisterBookManagementRoutes = func(router *mux.Router) {
 	router.HandleFunc("/restoreBook/{isbn}", controllers.RestoreBook).Methods("GET")
 	router.HandleFunc("/deleteBook/{isbn}", controllers.DeleteBook).Methods("GET")
 
+
 	router.HandleFunc("/restoreTrash", controllers.RestoreTrash).Methods("GET")
 	router.HandleFunc("/emptyTrash", controllers.EmptyTrash).Methods("GET")
 }
