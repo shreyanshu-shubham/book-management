@@ -57,7 +57,7 @@ func RestoreBook(w http.ResponseWriter, r *http.Request) {
 	}
 	db_utils.RestoreBook(ISBN)
 }
-func EmptyTrash(w http.ResponseWriter, r *http.Request)   {
+func EmptyTrash(w http.ResponseWriter, r *http.Request) {
 	st := db_utils.EmptyTrash()
 	if !st {
 		w.WriteHeader(500)
@@ -69,4 +69,16 @@ func RestoreTrash(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 	}
 }
-func DeleteBook(w http.ResponseWriter, r *http.Request)   {}
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	bookId := vars["isbn"]
+	ISBN, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		resp := db_utils.DeleteBook(ISBN)
+		if !resp {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}
+}
