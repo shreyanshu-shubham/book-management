@@ -72,7 +72,16 @@ func RestoreBook(isbn int64) bool {
 	return err == nil
 }
 
-func DeleteBok() {}
+func DeleteBook(isbn int64) bool {
+	db := getConnection()
+	defer db.Close()
+
+	_, err := db.Exec(
+		"delete from books where isbn=$1 and is_deleted=true",
+		isbn,
+	)
+	return err==nil
+}
 
 func GetAllBooks() []models.Book {
 	db := getConnection()
