@@ -3,10 +3,12 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
-	"github.com/shreyanshu-shubham/book-management/backend/controllers/utils"
+	"github.com/gorilla/mux"
 	db_utils "github.com/shreyanshu-shubham/book-management/backend/db-utils"
 	"github.com/shreyanshu-shubham/book-management/backend/models"
+	"github.com/shreyanshu-shubham/book-management/backend/utils"
 )
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
@@ -25,9 +27,25 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }
-func UpdateBook(w http.ResponseWriter, r *http.Request)   {}
-func TrashBook(w http.ResponseWriter, r *http.Request)    {}
-func RestoreBook(w http.ResponseWriter, r *http.Request)  {}
+func UpdateBook(w http.ResponseWriter, r *http.Request) {}
+func TrashBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	bookId := vars["isbn"]
+	ISBN, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	db_utils.TrashBook(ISBN)
+}
+func RestoreBook(w http.ResponseWriter, r *http.Request)  {
+	vars := mux.Vars(r)
+	bookId := vars["isbn"]
+	ISBN, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	db_utils.RestoreBook(ISBN)
+}
 func ClearTrash(w http.ResponseWriter, r *http.Request)   {}
 func RestoreTrash(w http.ResponseWriter, r *http.Request) {}
 func DeleteBook(w http.ResponseWriter, r *http.Request)   {}
