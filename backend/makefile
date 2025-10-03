@@ -25,3 +25,8 @@ docker: build
 clean:
 	@echo "Cleaning build directory..."
 	@[ -d ./build ] && rm -r $(BUILD_DIR)
+
+run: docker
+	@docker stop bk-manage
+	@docker rm bk-manage
+	@docker run -p 9999:9999 -d --name bk-manage bk-manage

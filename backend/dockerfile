@@ -1,10 +1,16 @@
-FROM postgres:16-alpine
+FROM postgres:18-trixie
 
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=postgres
 ENV POSTGRES_DB=bkmanage
 
-COPY dev/* /docker-entrypoint-initdb.d/
+COPY dev/init.sql /docker-entrypoint-initdb.d/
+COPY dev/run-server.sh /docker-entrypoint-initdb.d/
+COPY dev/bk-manage /etc/init.d/
 COPY build/* /app/
+
+RUN passwd -d root
+RUN mkdir -p /var/run/bk-manage
+RUN mkdir -p /var/log/bk-manage
 
 EXPOSE 9999
