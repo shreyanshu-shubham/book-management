@@ -1,0 +1,10 @@
+FROM postgres:16-alpine
+
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=bkmanage
+
+COPY dev/* /docker-entrypoint-initdb.d/
+COPY build/* /app/
+
+EXPOSE 9999
